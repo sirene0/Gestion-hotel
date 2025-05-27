@@ -185,6 +185,7 @@ public class SystemGH {
                 clientConnecte=cl;
                 adminConnecte=false;
                 System.out.println("Connexion client reussie !");
+                return;
             }
         }
         System.out.println("Echec de connexion client ! ");
