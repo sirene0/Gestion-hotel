@@ -1,9 +1,8 @@
 package com.gestion_hotel.entities;
-import java.util.Date;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 import com.gestion_hotel.enums.*;
 
 import jakarta.persistence.CascadeType;
