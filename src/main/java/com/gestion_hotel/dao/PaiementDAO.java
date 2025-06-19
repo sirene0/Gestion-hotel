@@ -3,8 +3,10 @@ package com.gestion_hotel.dao;
 import java.util.List;
 
 import com.gestion_hotel.entities.Paiment;
+import com.gestion_hotel.entities.Reservation;
 import com.gestion_hotel.util.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 public class PaiementDAO {
     public void ajouterPaiement(Paiment paiement ){
@@ -96,5 +98,14 @@ public class PaiementDAO {
             em.close();
         }
     }
-
+    public Paiment trouverParReservation(Reservation reservation) {
+    EntityManager em = JPAUtil.getEntityManager();
+    try {
+        return em.createQuery("SELECT p FROM Paiment p LE WHERE p.reservation = :reservation", Paiment.class).setParameter("reservation", reservation).getSingleResult();
+    } catch (NoResultException e) {
+        return null;
+    } finally {
+        em.close();
+    }
+}
 }

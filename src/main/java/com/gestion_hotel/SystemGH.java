@@ -84,16 +84,18 @@ public class SystemGH {
     }
     
     public static void intialiserSysteme(){
-        ad=new Adminstrateur("Admin", "System", "admin@gmail.com","admin123");
-        adminService.enregistrerAdmin(ad);
-
-        try {
-            chambreService.ajouterChambre(new Chambre( 100, Type.simple, 80.0, true));
-            chambreService.ajouterChambre(new Chambre( 101, Type.simple, 80.0, true));
-            chambreService.ajouterChambre(new Chambre( 200, Type.Double, 120.0, true));
-            chambreService.ajouterChambre(new Chambre( 201, Type.Double, 120.0, true));
-            chambreService.ajouterChambre(new Chambre( 300, Type.suite, 200.0, true));
-            chambreService.ajouterChambre(new Chambre( 301, Type.suite, 200.0, true));
+        
+        if (adminstrateurDAO.trouverparEmail("admin@gmail.com") == null) {
+            ad=new Adminstrateur("Admin", "System", "admin@gmail.com","admin123");
+            adminService.enregistrerAdmin(ad);
+            System.out.println("Administrateur initial créé avec succès !");
+            try {
+            chambreService.ajouterChambre(new Chambre( 100, Type.simple, 80.0, true,ad));
+            chambreService.ajouterChambre(new Chambre( 101, Type.simple, 80.0, true,ad));
+            chambreService.ajouterChambre(new Chambre( 200, Type.Double, 120.0, true,ad));
+            chambreService.ajouterChambre(new Chambre( 201, Type.Double, 120.0, true,ad));
+            chambreService.ajouterChambre(new Chambre( 300, Type.suite, 200.0, true,ad));
+            chambreService.ajouterChambre(new Chambre( 301, Type.suite, 200.0, true,ad));
 
             if(ad !=null){
                 List<Chambre> chambresCree =chambreService.listerChambres();
@@ -103,6 +105,12 @@ public class SystemGH {
         } catch (Exception e) {
             System.out.println("Error lors la creation d'un admin ou bien des chambres ");
         }
+        } else {
+            ad = adminstrateurDAO.trouverparEmail("admin@gmail.com");
+            System.out.println("Administrateur déjà existant.");
+        }
+
+        
     }
     
     
@@ -224,8 +232,7 @@ public class SystemGH {
             System.out.println("Echec de connexion client ! ");
         System.out.println("  verifier l'email ou bien mot de passe   ");
         }
-        System.out.println("Echec de connexion client ! ");
-        System.out.println("  verifier l'email ou bien mot de passe   ");
+        
     }
 
     public static void connexionadmin(){
@@ -249,7 +256,7 @@ public class SystemGH {
         int choix;
         do{
             System.out.println("---menu client---");
-            System.out.println("1. voir les chambrre disponible ");
+            System.out.println("1. voir les chambre disponible ");
             System.out.println("2. faire une reservation ");
             System.out.println("3. mes reservation  ");
             System.out.println("4. effectuer un paiment  ");
@@ -258,7 +265,22 @@ public class SystemGH {
             choix=lireChoix();
             switch (choix) {
                 case 1 :
-                    voirchambredispo(null, null);
+                    try{
+                        System.out.print(" enter la date de debut (yyyy-MM-dd) :");
+                        String  jourdeb=scanner.nextLine();
+                        System.out.print(" enter la date de fin  (yyyy-MM-dd) :");
+                        String  jourfin=scanner.nextLine();
+
+                        SimpleDateFormat s =new SimpleDateFormat("yyyy-MM-dd");
+                        Date datedeb = s.parse(jourdeb);
+                        Date datefin = s.parse(jourfin);
+
+
+                        voirchambredispo(datedeb,datefin);
+                    } catch (ParseException e) {
+                        System.out.println("Format de date invalide. Veuillez réessayer.");
+                    }
+    
                     break;
                 case 2 :
                     fairereserv();
@@ -283,15 +305,16 @@ public class SystemGH {
         }while(choix !=0);
     }
     
-    public static void menuadmin(){
+    public static void menuadmin () throws ParseException{
         int choix;
         do{
             System.out.println("---menu Adminstrateur---");
-            System.out.println("1. gerer les chambrre  ");
+            System.out.println("1. gerer les chambre  ");
             System.out.println("2. voir toutes les  reservation ");
-            System.out.println("3. valider une reservation  ");
-            System.out.println("4. annuler une reservation   ");
-            System.out.println("5.  Statistiques");
+            System.out.println("3. voir toutes les reservation confirmee");
+            System.out.println("4. valider une reservation  ");
+            System.out.println("5. annuler une reservation   ");
+            System.out.println("6.  Statistiques");
             System.out.println("0. retour menu principale  ");
 
             choix=lireChoix();
@@ -303,12 +326,15 @@ public class SystemGH {
                     voirtoutesreservation();
                     break;
                 case 3 :
-                    validereserv();
+                    voirreservationdisponible();
                     break;
                 case 4 :
-                    annulereserv();
+                    fairereservAdmin();
                     break;
                 case 5 :
+                    annulereserv();
+                    break;
+                case 6 :
                     statistique();
                     break;
                 case 0 :
@@ -346,16 +372,56 @@ public class SystemGH {
         System.out.println("Aucune chambre disponible pour cette période.");
     }
     }
-        
+    
+    public static void fairereservAdmin() throws ParseException{
+        System.out.println("---new reservation---");
+
+        System.out.print(" enter la date de debut (yyyy-MM-dd) :");
+        String  jourdeb=scanner.nextLine();
+        System.out.print(" enter la date de fin  (yyyy-MM-dd) :");
+        String  jourfin=scanner.nextLine();
+
+        SimpleDateFormat s =new SimpleDateFormat("yyyy-MM-dd");
+        Date datedeb = s.parse(jourdeb);
+        Date datefin = s.parse(jourfin);
+
+
+        voirchambredispo(datedeb,datefin);
+
+        System.out.println("donne moi numero de chambre :");
+        int numch= lireChoix();
+
+        Chambre chambreChoisie = chambreService.chercherChambre(numch);
+
+        if (chambreChoisie == null ||!chambreService.verifierDisponibilite(chambreChoisie,datedeb,datefin)) {
+            System.out.println(" Chambre non trouvée ou non disponible !");
+            return;
+        }
+        System.out.println("donne moi le client email :");
+        String emailClient = scanner.nextLine();
+        Client cl = clientDAO.trouverparEmail(emailClient);
+        if (cl == null ){
+            System.out.println(" vous devez d'abord inscrire le client !");
+            return;
+        }
+    
+        Reservation reservation= adminService.reserver(cl, chambreChoisie, datedeb, datefin, ad);
+        if (reservation != null) {
+            System.out.println("Réservation réussie !");
+        } else {
+            System.out.println("Échec de la réservation !");
+        }
+    }
+
     public static void fairereserv() throws ParseException{
         System.out.println("---new reservation---");
 
-        System.out.print(" enter la date de debut (yyyy-mm-dd) :");
+        System.out.print(" enter la date de debut (yyyy-MM-dd) :");
         String  jourdeb=scanner.nextLine();
-        System.out.print(" enter la date de fin  (yyyy-mm-dd) :");
+        System.out.print(" enter la date de fin  (yyyy-MM-dd) :");
         String  jourfin=scanner.nextLine();
 
-        SimpleDateFormat s =new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat s =new SimpleDateFormat("yyyy-MM-dd");
         Date datedeb = s.parse(jourdeb);
         Date datefin = s.parse(jourfin);
 
@@ -389,15 +455,11 @@ public class SystemGH {
     public static void effPaiment() {
         System.out.println("\n PAIEMENT ");
 
-        List<Reservation> toutesReservations = clientService.consulterReservations(clientConnecte);
-        List<Reservation> reservationsAPayer = new ArrayList<>();
-
-    // Filtrer uniquement les réservations confirmées
-        for (Reservation res : toutesReservations) {
-            if (res.getStatut() == Statut.confirmée) {
-                reservationsAPayer.add(res);
-            }
-        }
+        
+        List<Reservation> reservationsAPayer = reservationDAO.reservationsNonPayeesParClient(clientConnecte);
+        
+        // Filtrer uniquement les réservations confirmées
+        
 
         if (reservationsAPayer.isEmpty()) {
             System.out.println(" Aucune réservation confirmée à payer !");
@@ -463,9 +525,10 @@ public class SystemGH {
     public static void gerechambre(){
         System.out.println("\n GESTION DES CHAMBRES ");
         System.out.println("1. Voir toutes les chambres");
-        System.out.println("2. Ajouter une chambre");
-        System.out.println("3. Modifier une chambre");
-        System.out.println("4. Supprimer une chambre");
+        System.out.println("2.chambres disponibles ");
+        System.out.println("3. Ajouter une chambre");
+        System.out.println("4. Modifier une chambre");
+        System.out.println("5. Supprimer une chambre");
         System.out.print("Votre choix : ");
 
         int choix = lireChoix();
@@ -474,16 +537,33 @@ public class SystemGH {
                 voirToutesChambres();
                 break;
             case 2:
-                ajouterChambre();
+                try{
+                        System.out.print(" enter la date de debut (yyyy-MM-dd) :");
+                        String  jourdeb=scanner.nextLine();
+                        System.out.print(" enter la date de fin  (yyyy-MM-dd) :");
+                        String  jourfin=scanner.nextLine();
+
+                        SimpleDateFormat s =new SimpleDateFormat("yyyy-MM-dd");
+                        Date datedeb = s.parse(jourdeb);
+                        Date datefin = s.parse(jourfin);
+
+
+                        voirchambredispo(datedeb,datefin);
+                    } catch (ParseException e) {
+                        System.out.println("Format de date invalide. Veuillez réessayer.");
+                    }
                 break;
             case 3:
+                ajouterChambre();
+                break;
+            case 4:
                 modifierChambre();
                 break;
-            case 4 :
+            case 5 :
                 supprimerChambre();
                 break;
             default:
-                System.out.println("❌ Choix invalide !");
+                System.out.println(" Choix invalide !");
         }
 
     }
@@ -504,6 +584,11 @@ public class SystemGH {
     }
     
     public static void ajouterChambre(){
+        if (!adminConnecte) {
+            System.out.println("Vous devez être connecté en tant qu'administrateur !");
+            return;
+        }
+
         System.out.println(" ajouter une chambre :");
         System.out.print("Numéro de chambre : ");
         int numero = lireChoix();
@@ -533,7 +618,7 @@ public class SystemGH {
         System.out.print("Prix par nuit : ");
         double prix = Double.parseDouble(scanner.nextLine());
         try {
-            Chambre newchmb =new Chambre(numero,type, prix, true);
+            Chambre newchmb =new Chambre(numero,type, prix, true,ad);
             chambreService.ajouterChambre(newchmb);
             System.out.println(" Chambre ajoutée avec succès !");
         } catch (Exception e) {
@@ -553,6 +638,7 @@ public class SystemGH {
             chambre.setPrix(nouveauPrix);
             chambreService.modifierChambre(chambre);
             System.out.println("Chambre modifiée avec succès !");
+            voirToutesChambres();
         }else{
             System.out.println(" Chambre introuvable !");
         }
@@ -568,6 +654,7 @@ public class SystemGH {
         if( chambre !=null){
             chambreService.supprimerChambre(numero);
             System.out.println("chambre supprimer !");
+            voirToutesChambres();
         }else{
             System.out.println(" chambre introuvable !");
         }
@@ -583,6 +670,24 @@ public class SystemGH {
         }
         for(Reservation r :reservations ){
             if(r !=null){
+                System.out.println(" ID: " + r.getId() + 
+                            " , Client: " + r.getC().getNom() + " " + r.getC().getPrenom() +
+                            " , Chambre: " + r.getCh().getNumero() +
+                            " , Statut: " + r.getStatut() +
+                            " , Prix: " + r.calculerPrixTotal() + "€");
+            }
+        }
+    }
+    
+    public static void voirreservationdisponible(){
+        System.out.println(" voir reservation disponible (confirmee)");
+        List<Reservation> resers = reservationService.touteslesReservation();
+        if(resers == null ||resers.isEmpty()){
+            System.out.println(" aucune reservation trouvee ");
+            return;
+        }
+        for(Reservation r :resers ){
+            if(r !=null && r.getStatut() == Statut.confirmee){
                 System.out.println(" ID: " + r.getId() + 
                             " , Client: " + r.getC().getNom() + " " + r.getC().getPrenom() +
                             " , Chambre: " + r.getCh().getNumero() +
@@ -616,7 +721,7 @@ public class SystemGH {
         long id = Long.parseLong(scanner.nextLine());
 
         Reservation r = reservationService.chercherParId(id);
-        if (r != null && r.getStatut() != Statut.annulée) {
+        if (r != null && r.getStatut() != Statut.annulee) {
             reservationService.annulerReserv(id);
             System.out.println("Réservation annulée avec succès !");
         } else {
@@ -639,6 +744,7 @@ public class SystemGH {
         System.out.println("nombres des chambres disponibles : "+nbchambreDispo+"\n");
         System.out.println(" chiffre d'affaires : "+chiffreAffaires+"$\n");
     }
+    
     public static void deconnexion(){
         clientConnecte=null;
         adminConnecte=false;

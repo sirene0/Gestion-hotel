@@ -38,6 +38,9 @@ public class ClientService {
             System.out.println("Erreur : le mot de passe doit contenir au moins 6 caractères !");
             return false;
         }
+
+        
+
         clientDAO.enregistrerClient(client);
         System.out.println ("Client :" + client.getNom() +","+client.getPrenom()+ " inscrit avec succès !");
         return true;

@@ -1,5 +1,6 @@
 package com.gestion_hotel.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.gestion_hotel.dao.AdminstrateurDAO;
@@ -7,13 +8,14 @@ import com.gestion_hotel.dao.ChambreDAO;
 import com.gestion_hotel.dao.ReservationDAO;
 import com.gestion_hotel.entities.Adminstrateur;
 import com.gestion_hotel.entities.Chambre;
+import com.gestion_hotel.entities.Client;
 import com.gestion_hotel.entities.Reservation;
 
 public class AdminstrateurService {
     private AdminstrateurDAO adminDAO = new AdminstrateurDAO();
     private ChambreDAO chambreDAO= new ChambreDAO();
     private ReservationDAO reservationDAO =new ReservationDAO();
-
+    private ReservationService reservationService =new ReservationService();
     public boolean enregistrerAdmin(Adminstrateur admin ){
 
         if (adminDAO.trouverparEmail(admin.getEmail())!= null){
@@ -183,6 +185,10 @@ public class AdminstrateurService {
     
     public Adminstrateur getAdminConnecte(String email) {
         return adminDAO.trouverparEmail(email);
+    }
+    
+    public Reservation reserver(Client client ,Chambre chambre ,Date datedeb,Date datefin,Adminstrateur admin){
+        return reservationService.reserveradmin(client, chambre, datedeb, datefin, admin);
     }
     
     public void annulerResevation(Adminstrateur admin ,Reservation reserv ){

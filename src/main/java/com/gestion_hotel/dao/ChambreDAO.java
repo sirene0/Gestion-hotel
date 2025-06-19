@@ -14,6 +14,9 @@ public class ChambreDAO {
         EntityManager em =JPAUtil.getEntityManager();
         try{
             em.getTransaction().begin();
+            if (chambre.getAdmin() != null && !em.contains(chambre.getAdmin())) {
+                chambre.setAdmin(em.merge(chambre.getAdmin()));
+            }
             em.persist(chambre);
             em.getTransaction().commit();
         } catch (Exception e ) {
@@ -30,7 +33,9 @@ public class ChambreDAO {
         EntityManager em =JPAUtil.getEntityManager();
         Chambre chambre=null;
         try {
-            chambre=em.find(Chambre.class,numero);
+            chambre = em.createQuery("SELECT C FROM Chambre C LEFT JOIN FETCH C.reservations where C.numero = :numero",Chambre.class).setParameter("numero", numero).getSingleResult();
+        } catch (Exception e) {
+            System.err.println("Erreur : aucune chambre trouvée avec le numéro " + numero);
         } finally {
             em.close();
         }
@@ -56,7 +61,7 @@ public class ChambreDAO {
         Chambre ch=null;
         try{
             em.getTransaction().begin();
-            ch= em.find(Chambre.class,numero);
+            ch  = em.createQuery("SELECT C FROM Chambre C where C.numero = :numero",Chambre.class).setParameter("numero",numero).getSingleResult();
             if ( ch != null){
                 em.remove(ch);
                 em.getTransaction().commit();
@@ -109,7 +114,7 @@ public class ChambreDAO {
         EntityManager em =JPAUtil.getEntityManager();
         List<Chambre> chDispo = new ArrayList<>();
         try {
-            chDispo=em.createQuery("SELECT C FROM Chambre C WHERE C.disponible = true ORDER BY c.numero ",Chambre.class).getResultList();
+            chDispo=em.createQuery("SELECT C FROM Chambre C LEFT JOIN FETCH C.reservations WHERE C.disponible = true ORDER BY C.numero ",Chambre.class).getResultList();
         }catch(Exception e){
             System.err.println("erreur: lors de la recuperation de la liste des chambres disponible :"+e.getMessage());
         }finally{

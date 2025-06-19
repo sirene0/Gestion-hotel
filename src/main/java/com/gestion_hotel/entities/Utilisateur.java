@@ -25,7 +25,7 @@ public abstract class Utilisateur {
     @Column(nullable = false)
     private String motdepasse;
 
-    private boolean isInscrit;
+    private boolean isInscrit =true;
 
     @Column( insertable = false, updatable=false)
     @Enumerated( EnumType.STRING)
@@ -34,12 +34,12 @@ public abstract class Utilisateur {
     public Utilisateur() {
     }
 
-    public Utilisateur( String nom, String prenom, String email, String motdepasse,Typeutilisateur type) {
+    public Utilisateur( String nom, String prenom, String email, String motdepasse) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.motdepasse = motdepasse;
-        this.type=type;
+        
     }
     
     public long getId() {return id;}

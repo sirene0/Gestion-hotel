@@ -6,6 +6,7 @@ import java.util.List;
 //import java.util.Random;
 
 import com.gestion_hotel.dao.ReservationDAO;
+import com.gestion_hotel.entities.Adminstrateur;
 import com.gestion_hotel.entities.Chambre;
 import com.gestion_hotel.entities.Client;
 import com.gestion_hotel.entities.Reservation;
@@ -20,7 +21,7 @@ public class ReservationService {
             return null;
         }
         Date ajd =new Date();
-        if(!datedeb.before(ajd)){
+        if(datedeb.before(ajd)){
             System.out.println("Erreur vous devez mettre une date valide !");
             return null;
         }
@@ -34,7 +35,34 @@ public class ReservationService {
             return null;
         }
         //long idReservation = System.currentTimeMillis() + new Random().nextInt(1000);
-        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmée, client, chambre);
+        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre);
+        
+        reserDAO.AjouterReservation(reservation);
+        System.out.println("Réservation créée avec succès !");
+        return reservation;
+    }
+
+    public Reservation reserveradmin(Client client ,Chambre chambre ,Date datedeb,Date datefin,Adminstrateur admin){
+        if(! client.isInscrit()){
+            System.out.println("Erreur :vous devez d'abord inscrit pour reserver !");
+            return null;
+        }
+        Date ajd =new Date();
+        if(datedeb.before(ajd)){
+            System.out.println("Erreur vous devez mettre une date valide !");
+            return null;
+        }
+        if (datefin.before(datedeb)||datefin.equals(datedeb)){
+            System.out.println("Erreur: La date de fin doit être après la date de début!");
+            return null;
+        }
+        List<Reservation> toutesReservations =reserDAO.listeReserv();
+        if(!verifierDisponibiliteChambre(chambre,datedeb,datefin,toutesReservations)){
+            System.out.println("la chambre numero "+chambre.getNumero()+"n'est pas disponible entre "+datedeb+"et"+datefin);
+            return null;
+        }
+        //long idReservation = System.currentTimeMillis() + new Random().nextInt(1000);
+        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre);
         
         reserDAO.AjouterReservation(reservation);
         System.out.println("Réservation créée avec succès !");
@@ -50,7 +78,7 @@ public class ReservationService {
         }
         for (Reservation reserv : reservations){
             if (reserv != null 
-            && reserv.getStatut() !=Statut.annulée 
+            && reserv.getStatut() !=Statut.annulee 
             && reserv.getCh() != null 
             && reserv.getCh().getId() !=null 
             && reserv.getCh().getId().equals(chambre.getId()) 
@@ -119,7 +147,7 @@ public class ReservationService {
 
     public void validerReservation(Reservation reservation) {
         if(reservation != null){
-        reservation.setStatut(Statut.confirmée);
+        reservation.setStatut(Statut.confirmee);
         reserDAO.modifierReserv(reservation);
         System.out.println("reservation annulee !");
         }else{

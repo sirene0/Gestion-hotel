@@ -46,7 +46,7 @@ public class Reservation {
     private Paiment paiement;
     
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable =false)
+    @JoinColumn(name = "admin_id", nullable = true )
     private Adminstrateur admin;
 
     public Reservation() {
@@ -60,6 +60,7 @@ public class Reservation {
         this.statut = statut;
         this.c = c;
         this.ch = ch;
+        this.admin =admin;
     }
 
     public long getId() {return id;}
@@ -76,12 +77,12 @@ public class Reservation {
     public void setCh(Chambre ch) {    this.ch = ch;}
 
     public void confirmer(){
-        this.statut=Statut.confirmée;
+        this.statut=Statut.confirmee;
         ch.rendreindisponibe();
         System.out.println("Réservation confirmée !");
     }
     public void annuler(){
-        this.statut=Statut.annulée;
+        this.statut=Statut.annulee;
         ch.rendreDisponible();
         System.out.println("Réservation annulée !");
     }

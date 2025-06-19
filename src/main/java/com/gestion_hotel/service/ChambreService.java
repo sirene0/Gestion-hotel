@@ -9,6 +9,9 @@ import com.gestion_hotel.entities.Chambre;
 public class ChambreService {
     private ChambreDAO chambreDAO= new ChambreDAO();
     public void ajouterChambre(Chambre chambre) {
+        if (chambre.getAdmin() == null) {
+            throw new IllegalArgumentException("Une chambre doit avoir un administrateur associé");
+        }
         chambreDAO.ajouterCh(chambre);
     }
 

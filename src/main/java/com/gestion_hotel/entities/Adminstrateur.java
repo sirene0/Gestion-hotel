@@ -2,7 +2,7 @@ package com.gestion_hotel.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gestion_hotel.enums.*;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
@@ -25,12 +25,8 @@ public class Adminstrateur extends Utilisateur{
         super();
     }
 
-    public Adminstrateur(String nom, String prenom, String email, String motdepasse, Typeutilisateur type) {
-        super(nom, prenom, email, motdepasse, type);
-    }
-
     public Adminstrateur( String nom, String prenom, String email, String motdepasse) {
-        super( nom, prenom, email, motdepasse,Typeutilisateur.Adminstrateur);
+        super( nom, prenom, email, motdepasse);
         this.chambres=new ArrayList<>();
         this.allreservation=new ArrayList<>();
     }

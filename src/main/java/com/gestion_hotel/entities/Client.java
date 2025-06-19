@@ -3,7 +3,7 @@ package com.gestion_hotel.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gestion_hotel.enums.*;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
@@ -14,14 +14,14 @@ import jakarta.persistence.OneToMany;
 @Entity
 @DiscriminatorValue("Client")
 public  class Client extends Utilisateur{
-    @OneToMany(mappedBy = "c ",cascade = CascadeType.ALL ,orphanRemoval = true ,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "c",cascade = CascadeType.ALL ,orphanRemoval = true ,fetch = FetchType.LAZY)
     private List<Reservation> reservations =new ArrayList<>();
     
     public Client(){
         super();
     }
     public Client( String nom, String prenom, String email, String motdepasse) {
-        super( nom, prenom, email, motdepasse,Typeutilisateur.Client);
+        super( nom, prenom, email, motdepasse);
         this.reservations = new ArrayList<>();
     }
     

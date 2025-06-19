@@ -36,6 +36,15 @@ public class PaiementService {
     } 
     
     public void effectuerPaiement (Paiment paiement ){
+        if(paiement == null || paiement.getReservation() == null)
+        {System.out.println(" Paiement ou réservation invalide.");}
+        
+        Paiment paiementExistant = paiementDAO.trouverParReservation(paiement.getReservation());
+        if (paiementExistant != null) {
+            System.out.println(" Cette réservation a déjà été payée !");
+            return;
+        }
+
         boolean paiementEffectue =paiement.validerPaiment();
         if(paiementEffectue){
             paiementDAO.ajouterPaiement(paiement);

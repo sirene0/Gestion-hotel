@@ -7,6 +7,7 @@ import com.gestion_hotel.entities.Reservation;
 import com.gestion_hotel.enums.Statut;
 import com.gestion_hotel.util.JPAUtil;
 import jakarta.persistence.EntityManager;
+import com.gestion_hotel.entities.Client;;
 public class ReservationDAO {
     //ajouter une reservation 
     public void AjouterReservation(Reservation reserv ){
@@ -102,7 +103,7 @@ public class ReservationDAO {
     public double calculerChiffreAffaires() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            List<Reservation> reservations = em.createQuery("SELECT r FROM Reservation r WHERE r.statut = :statut", Reservation.class).setParameter("statut", Statut.confirmée).getResultList();
+            List<Reservation> reservations = em.createQuery("SELECT r FROM Reservation r WHERE r.statut = :statut", Reservation.class).setParameter("statut", Statut.confirmee).getResultList();
 
             double total = 0;
             for (Reservation r : reservations) {
@@ -114,5 +115,13 @@ public class ReservationDAO {
         }
     }
 
+    public List<Reservation> reservationsNonPayeesParClient(Client client) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT r FROM Reservation r WHERE r.c = :client AND r.statut = :statut AND r.paiement IS NULL",Reservation.class).setParameter("client", client).setParameter("statut", Statut.confirmee).getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
 

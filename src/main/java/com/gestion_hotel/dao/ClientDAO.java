@@ -35,9 +35,9 @@ public class ClientDAO {
         EntityManager em =JPAUtil.getEntityManager();
         Client client = null;
         try{
-            client =em.createQuery("SELECT C FROM Client C WHERE C.email = :email",Client.class).setParameter("email",email).getSingleResult();
+            client =em.createQuery("SELECT C FROM Client C WHERE C.email = :email ",Client.class).setParameter("email",email).getSingleResult();
         }catch(NoResultException e){
-                System.err.println("aucun utilisateur trouve avec cet email :"+email);
+                System.err.println("aucun client trouve avec cet email :"+email);
         }finally{
             em.close();
         }
@@ -49,7 +49,7 @@ public class ClientDAO {
         EntityManager em =JPAUtil.getEntityManager();
         Client client =null;
         try{
-            client= em.createQuery("SELECT C FROM Client C WHERE C.id= :id",Client.class).setParameter("id",id).getSingleResult();
+            client= em.createQuery("SELECT C FROM Client  C WHERE C.id= :id  ",Client.class).setParameter("id",id).getSingleResult();
         }finally{
             em.close();
         }
@@ -61,7 +61,7 @@ public class ClientDAO {
         EntityManager em= JPAUtil.getEntityManager();
         List<Client> clients =new ArrayList<>();
         try{
-            clients=em.createQuery("SELECT C FROM Client C ORDER BY C.nom",Client.class).getResultList();
+            clients=em.createQuery("SELECT C FROM Client C WHERE ORDER BY C.nom ",Client.class).getResultList();
         }catch(Exception e){
             System.err.println("Erreur lors de la récupération des clients : " + e.getMessage());
         }finally{

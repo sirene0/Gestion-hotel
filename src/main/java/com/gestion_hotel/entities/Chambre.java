@@ -16,7 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 @Entity
@@ -37,18 +37,19 @@ public class Chambre {
     @OneToMany(mappedBy = "ch",cascade = CascadeType.ALL,orphanRemoval = true,fetch=FetchType.LAZY)
     private  List <Reservation> reservations;
 
-    @ManyToMany
-    @JoinColumn(name ="admin_id", nullable = false )
+    @ManyToOne
+    @JoinColumn(name = "admin_id", nullable = false)
     private Adminstrateur admin;
     
     public Chambre() {
     }
 
-    public Chambre( int numero, Type type, double prix, boolean disponible) {
+    public Chambre( int numero, Type type, double prix, boolean disponible, Adminstrateur admin ) {
         this.numero = numero;
         this.type = type;
         this.prix = prix;
         this.disponible = disponible;
+        this.admin = admin;
         this.reservations=new ArrayList<>();
     }
     
@@ -76,7 +77,7 @@ public class Chambre {
         }
         
         for(Reservation r :reservations){
-            if(!r.getStatut().equals("annulée")){
+            if(r.getStatut()!= Statut.annulee){
                 if(datesSeChevauchtent(r.getDateDebut(),r.getDateFin(),dateDebut,dateFin)){return false ;}
             }
         

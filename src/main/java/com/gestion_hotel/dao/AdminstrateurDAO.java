@@ -32,7 +32,7 @@ public class AdminstrateurDAO {
         EntityManager em =JPAUtil.getEntityManager();
         Adminstrateur admin = null;
         try{
-            admin =em.createQuery("SELECT A FROM Adminstrateur A WHERE A.email = :email",Adminstrateur.class).setParameter("email",email).getSingleResult();
+            admin =em.createQuery("SELECT A FROM Adminstrateur A WHERE A.email = :email ",Adminstrateur.class).setParameter("email",email).getSingleResult();
         }catch(NoResultException e){
                 System.err.println("aucun adminstrateur trouve avec cet email :"+email);
         }finally{
@@ -46,7 +46,7 @@ public class AdminstrateurDAO {
         EntityManager em =JPAUtil.getEntityManager();
         Adminstrateur admin =null;
         try{
-            admin= em.createQuery("SELECT A FROM Adminstrateur A WHERE A.id= :id",Adminstrateur.class).setParameter("id",id).getSingleResult();
+            admin= em.createQuery("SELECT A Adminstrateur A WHERE A.id= :id ",Adminstrateur.class).setParameter("id",id).getSingleResult();
         }finally{
             em.close();
         }
@@ -58,7 +58,7 @@ public class AdminstrateurDAO {
         EntityManager em= JPAUtil.getEntityManager();
         List<Adminstrateur> admins =new ArrayList<>();
         try{
-            admins=em.createQuery("SELECT A FROM Adminstrateur A ORDER BY A.nom",Adminstrateur.class).getResultList();
+            admins=em.createQuery("SELECT A FROM Adminstrateur A  ORDER BY A.nom",Adminstrateur.class).getResultList();
         }catch(Exception e){
             System.err.println("Erreur lors de la récupération des adminstrateurs : " + e.getMessage());
         }finally{
@@ -110,7 +110,7 @@ public class AdminstrateurDAO {
     public Long compterAdminstrateur(){
         EntityManager em = JPAUtil.getEntityManager();
         try{
-            return em.createQuery("SELECT A FROM Adminstrateur A ",Long.class).getSingleResult();
+            return em.createQuery("SELECT COUNT(A) FROM Adminstrateur A ",Long.class).getSingleResult();
         } finally{
             em.close();
         }
