@@ -53,7 +53,7 @@ public class Reservation {
     }
 
 
-    public Reservation( Date dateDebut, Date dateFin, Statut statut, Client c, Chambre ch) {
+    public Reservation( Date dateDebut, Date dateFin, Statut statut, Client c, Chambre ch,Adminstrateur admin) {
 
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;

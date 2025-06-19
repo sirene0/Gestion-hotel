@@ -78,8 +78,8 @@ public class ClientService {
     }
 
     
-    public Reservation reserver(Client client,Chambre chambre ,Date datedeb ,Date datefin){
-        return reservationService.reserver(client, chambre, datedeb, datefin);
+    public Reservation reserver(Client client,Chambre chambre ,Date datedeb ,Date datefin,Adminstrateur ad){
+        return reservationService.reserver(client, chambre, datedeb, datefin, ad);
     }
     
     public void annulerResevation(Client client ,Reservation reserv ){

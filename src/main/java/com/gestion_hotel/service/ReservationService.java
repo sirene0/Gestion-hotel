@@ -15,7 +15,7 @@ import com.gestion_hotel.enums.Statut;
 public class ReservationService {
     private ReservationDAO reserDAO = new ReservationDAO();
 
-    public Reservation reserver(Client client ,Chambre chambre ,Date datedeb,Date datefin){
+    public Reservation reserver(Client client ,Chambre chambre ,Date datedeb,Date datefin,Adminstrateur ad){
         if(! client.isInscrit()){
             System.out.println("Erreur :vous devez d'abord inscrit pour reserver !");
             return null;
@@ -35,7 +35,7 @@ public class ReservationService {
             return null;
         }
         //long idReservation = System.currentTimeMillis() + new Random().nextInt(1000);
-        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre);
+        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre,ad);
         
         reserDAO.AjouterReservation(reservation);
         System.out.println("Réservation créée avec succès !");
@@ -62,7 +62,7 @@ public class ReservationService {
             return null;
         }
         //long idReservation = System.currentTimeMillis() + new Random().nextInt(1000);
-        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre);
+        Reservation reservation = new Reservation(datedeb, datefin, Statut.confirmee, client, chambre, admin);
         
         reserDAO.AjouterReservation(reservation);
         System.out.println("Réservation créée avec succès !");
