@@ -9,18 +9,19 @@
         <class>com.gestion_hotel.entities.Paiment</class>
         <class>com.gestion_hotel.entities.Reservation</class>
         <class>com.gestion_hotel.entities.Utilisateur</class>
-        <properties>
+            <properties>
             <!--configuration proprietes de connexion -->
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/gestion_hotel"/>
-            <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value=""/>
+                <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+                <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://aws-0-eu-west-3.pooler.supabase.com:6543/postgres"/>
+                <property name="jakarta.persistence.jdbc.user" value="postgres.yxoelgpaqcredpbytjwz"/>
+                <property name="jakarta.persistence.jdbc.password" value="@Robin18012022!rinari"/>
+
             <!--configuration hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.connection.provider_class" value="org.hibernate.connection.DriverManagerConnectionProvider"/>
-        </properties>
+                <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+                <property name="hibernate.hbm2ddl.auto" value="update"/>
+                <property name="hibernate.show_sql" value="true"/>
+                <property name="hibernate.format_sql" value="true"/>
+            </properties>
     </persistence-unit>
+
 </persistence>
